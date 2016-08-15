@@ -31,10 +31,15 @@
 
     var moveColor = 'White';
     
-    if (game.turn() === 'b') moveColor = 'Black';
-    if (game.in_checkmate() === true) status = 'Game over, ' + moveColor + ' is in checkmate.';
-    else if (game.in_draw() === true) status = 'Game over, drawn position';
-    else {
+    if (game.turn() === 'b') {
+      moveColor = 'Black';
+    }
+    
+    if (game.in_checkmate() === true) {
+      status = 'Game over, ' + moveColor + ' is in checkmate.';
+    } else if (game.in_draw() === true) {
+      status = 'Game over, drawn position';
+    } else {
       status = moveColor + ' to move';
 
       if (game.in_check() === true) {
@@ -46,18 +51,37 @@
     fenEl.html(game.fen());
   };
 
+  /**
+   * Configuration option for the actual board.  The game validation
+   * and the board handling mechanics work independently of each
+   * other, so this is just the board config.
+   * 
+   * @type {{draggable: boolean, position: string, pieceTheme: string}}
+   */
   var cfg = {
-    draggable: true,
+    draggable: false,
     position: 'start',
     pieceTheme: 'js/chessboardjs/www/img/chesspieces/alpha/{piece}.png'
   };
-  
+
+  /**
+   * Create the board instance.
+   */
   board = ChessBoard('board', cfg);
 
+  /**
+   * Update the status initially.
+   */
   updateStatus();
 
+  /**
+   * Connect to the socket server.
+   */
   var socket = io.connect('http://chess.shift3sandbox.com:8080');
 
+  /**
+   * When a move piece event is triggered...
+   */
   socket.on('move piece', function (data) {
     var move = game.move({
       from: data.from,
@@ -68,8 +92,10 @@
     // illegal move
     if (!move) return;
 
+    //move the piece
     board.move(data.from + '-' + data.to);
 
+    //update the status
     updateStatus();
   });
 }());
