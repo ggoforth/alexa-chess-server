@@ -5,6 +5,13 @@
   var board,
 
     /**
+     * The socket connection string.
+     * 
+     * @type {string}
+     */
+    socketUrl = 'http://localhost:5000',
+
+    /**
      * The game validation engine.
      */
     game = new Chess(),
@@ -77,7 +84,7 @@
   /**
    * Connect to the socket server.
    */
-  var socket = io.connect('http://chess.shift3sandbox.com:8080');
+  var socket = io.connect(socketUrl);
 
   /**
    * When a move piece event is triggered...
