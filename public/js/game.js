@@ -82,8 +82,8 @@
     console.log('Moving piece: ', data);
 
     var move = game.move({
-      from: source,
-      to: target,
+      from: data.from,
+      to: data.to,
       promotion: 'q' // NOTE: always promote to a queen for example simplicity
     });
 
