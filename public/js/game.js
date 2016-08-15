@@ -78,11 +78,12 @@
 
   var socket = io.connect('http://chess.shift3sandbox.com:8080');
 
-  socket.on('move', function (data) {
-    //data.from = 'e2'
-    //data.to = 'h3'
+  socket.on('move piece', function (data) {
+    console.log('Moving piece: ', data);
+    
     if (!onDrop(data.from, data.to)) return;
 
+    console.log('init piece move');
     board.move(data.from + '-' + data.to);
   });
 }());

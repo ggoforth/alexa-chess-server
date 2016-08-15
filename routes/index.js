@@ -8,7 +8,9 @@ router.get('/', function (req, res) {
 });
 
 router.get('/move/:from/:to', function (req, res) {
-  res.io.emit('move', {
+  console.log(`Moving from ${req.params.from} to ${req.params.to}`);
+  
+  res.io.emit('move piece', {
     from: req.params.from,
     to: req.params.to
   });
