@@ -1,19 +1,14 @@
 (function () {
   /**
-   * The board object, will be set near the end of the script.
+   * The socket connection string for locahost.
+   *
+   * @type {string}
    */
-  var board,
-
-    /**
-     * The socket connection string for locahost.
-     * 
-     * @type {string}
-     */
-    localSocketUrl = 'http://localhost:5000',
+  var localSocketUrl = 'http://localhost:5000',
 
     /**
      * Production socket url.
-     * 
+     *
      * @type {string}
      */
     prodSocketUrl = 'http://chess.shift3sandbox.com:8080',
@@ -25,63 +20,87 @@
 
     /**
      * The status of the game, IE whos turn it is.
-     * 
+     *
      * @type {*|jQuery|HTMLElement}
      */
     statusEl = $('#status'),
 
     /**
      * The fen element.
-     * 
+     *
      * @type {*|jQuery|HTMLElement}
      */
-    fenEl = $('#fen');
+    fenEl = $('#fen'),
 
-  /**
-   * The status updating function.
-   */
-  var updateStatus = function () {
-    var status = '';
+    /**
+     * The status updating function.
+     */
+    updateStatus = function () {
+      var status = '';
 
-    var moveColor = 'White';
-    
-    if (game.turn() === 'b') {
-      moveColor = 'Black';
-    }
-    
-    if (game.in_checkmate() === true) {
-      status = 'Game over, ' + moveColor + ' is in checkmate.';
-    } else if (game.in_draw() === true) {
-      status = 'Game over, drawn position';
-    } else {
-      status = moveColor + ' to move';
+      var moveColor = 'White';
 
-      if (game.in_check() === true) {
-        status += ', ' + moveColor + ' is in check';
+      if (game.turn() === 'b') {
+        moveColor = 'Black';
       }
-    }
 
-    statusEl.html(status);
-    fenEl.html(game.fen());
-  };
+      if (game.in_checkmate() === true) {
+        status = 'Game over, ' + moveColor + ' is in checkmate.';
+      } else if (game.in_draw() === true) {
+        status = 'Game over, drawn position';
+      } else {
+        status = moveColor + ' to move';
 
-  /**
-   * Configuration option for the actual board.  The game validation
-   * and the board handling mechanics work independently of each
-   * other, so this is just the board config.
-   * 
-   * @type {{draggable: boolean, position: string, pieceTheme: string}}
-   */
-  var cfg = {
-    draggable: false,
-    position: 'start',
-    pieceTheme: 'js/chessboardjs/www/img/chesspieces/alpha/{piece}.png'
-  };
+        if (game.in_check() === true) {
+          status += ', ' + moveColor + ' is in check';
+        }
+      }
 
-  /**
-   * Create the board instance.
-   */
-  board = ChessBoard('board', cfg);
+      statusEl.html(status);
+      fenEl.html(game.fen());
+    },
+
+    movePiece = function (data) {
+      var move = game.move({
+        from: data.from,
+        to: data.to,
+        promotion: 'q' // NOTE: always promote to a queen for example simplicity
+      });
+
+      // illegal move
+      if (!move) return;
+
+      //move the piece
+      board.move(data.from + '-' + data.to);
+
+      //update the status
+      updateStatus();
+    },
+
+    /**
+     * Configuration option for the actual board.  The game validation
+     * and the board handling mechanics work independently of each
+     * other, so this is just the board config.
+     *
+     * @type {{draggable: boolean, position: string, pieceTheme: string}}
+     */
+    cfg = {
+      draggable: false,
+      position: 'start',
+      pieceTheme: 'js/chessboardjs/www/img/chesspieces/alpha/{piece}.png'
+    },
+
+    /**
+     * The socket connection.
+     * 
+     * @type {*|{server}}
+     */
+    socket = io.connect(prodSocketUrl),
+
+    /**
+     * Create the board instance.
+     */
+    board = ChessBoard('board', cfg);
 
   /**
    * Update the status initially.
@@ -89,27 +108,7 @@
   updateStatus();
 
   /**
-   * Connect to the socket server.
-   */
-  var socket = io.connect(prodSocketUrl);
-
-  /**
    * When a move piece event is triggered...
    */
-  socket.on('move piece', function (data) {
-    var move = game.move({
-      from: data.from,
-      to: data.to,
-      promotion: 'q' // NOTE: always promote to a queen for example simplicity
-    });
-
-    // illegal move
-    if (!move) return;
-
-    //move the piece
-    board.move(data.from + '-' + data.to);
-
-    //update the status
-    updateStatus();
-  });
+  socket.on('move piece', movePiece);
 }());
