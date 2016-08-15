@@ -1,27 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><%= title %></title>
+    <title>Chess with all your friends</title>
+
+    <link rel="stylesheet"
+          href="/js/chessboardjs/www/css/chessboard.css">
+
     <link rel='stylesheet'
           href='/stylesheets/style.css'/>
 </head>
 <body>
-<h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
-<button id="eventEmitter">Click me to emit an event!</button>
-<h1 id="welcomeMessage"></h1>
+
+<div id="board" style="width: 400px"></div>
+<p>Status: <span id="status"></span></p>
+<p>FEN: <span id="fen"></span></p>
+<p>PGN: <span id="pgn"></span></p>
+
 <script src="/socket.io/socket.io.js"></script>
-<script>
-    var socket = io.connect('<%= path %>');
-
-    var button = document.getElementById('eventEmitter');
-    button.addEventListener('click', function () {
-        socket.emit('welcome other users', {some: 'data'});
-    });
-
-    socket.on('welcome other users', function (data) {
-        document.getElementById('welcomeMessage').innerHTML = data;
-    });
-</script>
+<script src="/js/chessboardjs/www/js/jquery-1.10.1.min.js"></script>
+<script src="/js/chessboardjs/www/js/chess.js"></script>
+<script src="/js/chessboardjs/www/js/chessboard.js"></script>
+<script src="/js/game.js"></script>
 </body>
 </html>

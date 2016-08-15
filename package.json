@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "env $(cat .env) node ./bin/www"
+    "start": "env $(cat .env) nodemon ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
