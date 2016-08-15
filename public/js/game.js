@@ -16,7 +16,7 @@
      * 
      * @type {string}
      */
-    prodSocketUrl = 'http://chess.shift3tech.com:8080',
+    prodSocketUrl = 'http://chess.shift3sandbox.com:8080',
 
     /**
      * The game validation engine.
