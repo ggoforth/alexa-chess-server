@@ -80,10 +80,16 @@
 
   socket.on('move piece', function (data) {
     console.log('Moving piece: ', data);
-    
-    if (!onDrop(data.from, data.to)) return;
 
-    console.log('init piece move');
+    var move = game.move({
+      from: source,
+      to: target,
+      promotion: 'q' // NOTE: always promote to a queen for example simplicity
+    });
+
+    // illegal move
+    if (!move) return;
+
     board.move(data.from + '-' + data.to);
   });
 }());
