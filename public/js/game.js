@@ -76,7 +76,7 @@
 
   updateStatus();
 
-  var socket = io.connect('http://localhost:5000');
+  var socket = io.connect('http://chess.shift3sandbox.com:8080');
 
   socket.on('move', function (data) {
     //data.from = 'e2'
