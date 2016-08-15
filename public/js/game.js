@@ -5,11 +5,18 @@
   var board,
 
     /**
-     * The socket connection string.
+     * The socket connection string for locahost.
      * 
      * @type {string}
      */
-    socketUrl = 'http://localhost:5000',
+    localSocketUrl = 'http://localhost:5000',
+
+    /**
+     * Production socket url.
+     * 
+     * @type {string}
+     */
+    prodSocketUrl = 'http://chess.shift3tech.com:8080',
 
     /**
      * The game validation engine.
@@ -84,7 +91,7 @@
   /**
    * Connect to the socket server.
    */
-  var socket = io.connect(socketUrl);
+  var socket = io.connect(prodSocketUrl);
 
   /**
    * When a move piece event is triggered...
