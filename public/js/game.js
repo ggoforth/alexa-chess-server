@@ -91,5 +91,6 @@
     if (!move) return;
 
     board.move(data.from + '-' + data.to);
+    updateStatus();
   });
 }());
