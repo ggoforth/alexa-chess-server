@@ -12,3 +12,11 @@ header {
   color: white;
   margin-bottom: 30px;
 }
+
+.enter-game-code {
+  margin-top: 200px;
+}
+
+.enter-game-code input {
+  margin-top: 15px;
+}

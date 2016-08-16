@@ -13,7 +13,11 @@ const express = require('express'),
 /**
  * Setup socket connections.
  */
-io.on('connection', (socket) => console.log('user connected'));
+io.on('connection', socket => {
+  socket.on('join game', game => {
+    socket.join(game);
+  });
+});
 
 /**
  * Attach the io instance to all request for access

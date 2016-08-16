@@ -1,5 +1,6 @@
 {
-  "globals": [
-    "io"
-  ]
+  "globals": {
+    "io": true
+  },
+  "esversion": 6
 }

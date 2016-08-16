@@ -1,22 +1,13 @@
 (function () {
   /**
-   * The socket connection string for locahost.
-   *
-   * @type {string}
+   * The game validation engine.
    */
-  var localSocketUrl = '',
+  var game = new Chess(),
 
     /**
-     * Production socket url.
-     *
-     * @type {string}
+     * Will hold the board instance.
      */
-    prodSocketUrl = 'http://chess.shift3sandbox.com:8080',
-
-    /**
-     * The game validation engine.
-     */
-    game = new Chess(),
+    board,
 
     /**
      * The status of the game, IE whos turn it is.
@@ -26,11 +17,46 @@
     statusEl = $('#status'),
 
     /**
-     * The fen element.
+     * The games header bar.
      *
      * @type {*|jQuery|HTMLElement}
      */
-    fenEl = $('#fen'),
+    header = $('.game-header'),
+
+    /**
+     * The game code to join.
+     *
+     * @type {*|jQuery|HTMLElement}
+     */
+    gameCode = $('.game-code'),
+
+    /**
+     * The enter game code div.
+     *
+     * @type {*|jQuery|HTMLElement}
+     */
+    enterGameCode = $('.enter-game-code'),
+
+    /**
+     * The join game button.
+     *
+     * @type {*|jQuery|HTMLElement}
+     */
+    joinGame = $('.join-game'),
+
+    /**
+     * The chess board containing div.
+     *
+     * @type {*|jQuery|HTMLElement}
+     */
+    chessBoard = $('.chess-board'),
+
+    /**
+     * Leave a game.
+     * 
+     * @type {*|jQuery|HTMLElement}
+     */
+    leaveGame = $('.leave-game'),
 
     /**
      * The status updating function.
@@ -57,9 +83,13 @@
       }
 
       statusEl.html(status);
-      fenEl.html(game.fen());
     },
 
+    /**
+     * Move a piece on the board.
+     * 
+     * @param data
+     */
     movePiece = function (data) {
       var move = game.move({
         from: data.from,
@@ -75,6 +105,17 @@
 
       //update the status
       updateStatus();
+
+      //When a piece is moved, we need to store 
+      localStorage.setItem('chess.fen', game.fen());
+    },
+
+    /**
+     * Leave game event.
+     */
+    leaveGameEvent = function () {
+      localStorage.clear();
+      window.location.reload(true);
     },
 
     /**
@@ -86,7 +127,7 @@
      */
     cfg = {
       draggable: false,
-      position: 'start',
+      position: localStorage.getItem('chess.fen') || 'start',
       pieceTheme: 'js/chessboardjs/www/img/chesspieces/alpha/{piece}.png'
     },
 
@@ -98,17 +139,59 @@
     socket = io.connect(),
 
     /**
-     * Create the board instance.
+     * The current game, if there is one.
      */
+    currentGame = localStorage.getItem('chess.room'),
+
+    /**
+     * Get the current fen.
+     */
+    currentFen = localStorage.getItem('chess.fen');
+
+  /**
+   * We don't yet have a game setup.
+   */
+  if (!currentGame) {
+    header.hide();
+    chessBoard.hide();
+    enterGameCode.show();
+
+    /**
+     * Listen for clicks on the join game button.
+     */
+    joinGame.on('click', function () {
+      var code = gameCode.val();
+      if (!code) return;
+      socket.emit('join game', code);
+      localStorage.setItem('chess.room', code);
+      window.location.reload(true);
+    });
+  } else {
+    //joins the proper game room
+    socket.emit('join game', currentGame);
+   
+    //show and hide all the relevant things
+    header.show();
+    chessBoard.show();
+    enterGameCode.hide();
+    
+    //setup the leave game button click handler.
+    leaveGame.on('click', leaveGameEvent);
+
+    /**
+     * If we have a current fen (we've been playing), load it now.
+     * This is what sets who's turn it is first.
+     */
+    if (currentFen) game.load(currentFen);
+
+    
+    //Initialize the board on screen.
     board = ChessBoard('board', cfg);
 
-  /**
-   * Update the status initially.
-   */
-  updateStatus();
+    //When a move piece event is triggered...
+    socket.on('move piece', movePiece);
 
-  /**
-   * When a move piece event is triggered...
-   */
-  socket.on('move piece', movePiece);
+    //Update the status of the board.
+    updateStatus();
+  }
 }());

@@ -15,14 +15,30 @@
 <body>
 
 <div class="container-fluid">
-    <header class="row">
+    <header class="row game-header">
         <div class="col-md-12">
             <div class="pull-left">Status: <span id="status"></span></div>
-            <div class="pull-right">FEN: <span id="fen"></span></div>
+            <button class="leave-game pull-right btn btn-default btn-xs"
+                    style="margin-left: 15px;">Leave Game
+            </button>
         </div>
     </header>
 
-    <div class="row">
+    <div class="row enter-game-code">
+        <div class="col-md-2 col-md-offset-5 text-center">
+            Enter your game code.
+
+            <input type="number"
+                   class="form-control game-code"
+                   id="gameCode">
+
+            <button class="btn btn-block btn-success join-game"
+                    style="margin-top: 15px;">Join Game
+            </button>
+        </div>
+    </div>
+
+    <div class="row chess-board">
         <div id="board"
              style="width: 600px; margin-left: auto; margin-right: auto;"></div>
     </div>
