@@ -17,6 +17,12 @@ io.on('connection', socket => {
   socket.on('join game', game => {
     socket.join(game);
   });
+  
+  socket.on('left game', (game) => {
+    io.sockets
+      .in(game)
+      .emit('you win');
+  });
 });
 
 /**

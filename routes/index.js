@@ -12,8 +12,6 @@ router.get('/', function (req, res) {
 router.get('/:game/move/:from/:to', function (req, res) {
   let p = req.params;
 
-  console.log(`Moving game ${p.game} from ${p.from} to ${p.to}`);
-
   res.io.sockets
     .in(p.game)
     .emit('move piece', {

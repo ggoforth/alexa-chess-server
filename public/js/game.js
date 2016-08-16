@@ -59,6 +59,13 @@
     leaveGame = $('.leave-game'),
 
     /**
+     * The You win message.
+     * 
+     * @type {*|jQuery|HTMLElement}
+     */
+    youWinMessage = $('.you-win'),
+
+    /**
      * The status updating function.
      */
     updateStatus = function () {
@@ -116,6 +123,7 @@
     leaveGameEvent = function () {
       localStorage.clear();
       window.location.reload(true);
+      socket.emit('left game', currentGame); 
     },
 
     /**
@@ -131,6 +139,16 @@
       pieceTheme: 'js/chessboardjs/www/img/chesspieces/alpha/{piece}.png'
     },
 
+    /**
+     * When someone leaves the game early.
+     */
+    youWin = function () {
+      header.hide();
+      chessBoard.hide();
+      enterGameCode.hide();
+      youWinMessage.show(); 
+    },
+    
     /**
      * The socket connection.
      *
@@ -154,6 +172,7 @@
   if (!currentGame) {
     header.hide();
     chessBoard.hide();
+    youWinMessage.hide();
     enterGameCode.show();
 
     /**
@@ -174,6 +193,7 @@
     header.show();
     chessBoard.show();
     enterGameCode.hide();
+    youWinMessage.hide();
     
     //setup the leave game button click handler.
     leaveGame.on('click', leaveGameEvent);
@@ -190,6 +210,7 @@
 
     //When a move piece event is triggered...
     socket.on('move piece', movePiece);
+    socket.on('you win', youWin);
 
     //Update the status of the board.
     updateStatus();
