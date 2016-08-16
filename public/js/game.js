@@ -4,7 +4,7 @@
    *
    * @type {string}
    */
-  var localSocketUrl = 'http://localhost:5000',
+  var localSocketUrl = '',
 
     /**
      * Production socket url.
@@ -92,10 +92,10 @@
 
     /**
      * The socket connection.
-     * 
+     *
      * @type {*|{server}}
      */
-    socket = io.connect(prodSocketUrl),
+    socket = io.connect(),
 
     /**
      * Create the board instance.
